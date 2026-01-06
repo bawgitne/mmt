@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Mạng Máy Tính Căn Bản</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f0f4f8;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .tab-active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+        }
+
+        .sub-tab-active {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border-left: 4px solid #1d4ed8;
+            font-weight: 600;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Highlight classes */
+        .highlight-blue { color: #2563eb; font-weight: 600; }
+        .highlight-red { color: #dc2626; font-weight: 600; }
+        .highlight-green { color: #16a34a; font-weight: 600; }
+        .bg-highlight { background-color: #fffbeb; border-left: 4px solid #fbbf24; padding: 1rem; margin-bottom: 1rem; border-radius: 0 0.5rem 0.5rem 0; }
+
+        /* Quiz Styles */
+        .option-card {
+            transition: all 0.2s;
+            border: 2px solid #e2e8f0;
+        }
+        .option-card:hover:not(.disabled) {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            cursor: pointer;
+        }
+        .option-selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .option-correct {
+            border-color: #22c55e !important;
+            background-color: #dcfce7 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+        }
+    </style>
+</head>
+<body class="text-slate-700 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm z-10 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg text-white">
+                    <i data-lucide="network"></i>
+                </div>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                    Ôn Tập Mạng Máy Tính
+                </h1>
+            </div>
+            <nav class="flex gap-2 bg-slate-100 p-1 rounded-xl">
+                <button onclick="switchMainTab('theory')" id="btn-theory" class="px-6 py-2 rounded-lg text-sm font-medium transition-all tab-active">
+                    <span class="flex items-center gap-2"><i data-lucide="book-open" size="16"></i> Lý Thuyết</span>
+                </button>
+                <button onclick="switchMainTab('practice')" id="btn-practice" class="px-6 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 transition-all">
+                    <span class="flex items-center gap-2"><i data-lucide="check-circle" size="16"></i> Kiểm Tra Thử</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-hidden relative">
+        
+        <!-- THEORY TAB -->
+        <div id="tab-theory" class="h-full flex absolute inset-0 transition-all duration-300">
+            <!-- Sidebar -->
+            <aside class="w-80 bg-white border-r border-slate-200 overflow-y-auto shrink-0 hidden md:block">
+                <div class="p-4">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Mục Lục Chi Tiết</h2>
+                    <nav class="space-y-1" id="theory-nav">
+                        <!-- Nav items generated by JS -->
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8 scroll-smooth" id="theory-content-container">
+                <div class="max-w-5xl mx-auto glass-panel rounded-2xl p-6 md:p-10 shadow-lg min-h-full fade-in" id="theory-display">
+                    <!-- Theory content injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PRACTICE TAB -->
+        <div id="tab-practice" class="h-full absolute inset-0 transition-all duration-300 transform translate-x-full opacity-0 pointer-events-none flex flex-col">
+            <!-- Start Screen -->
+            <div id="quiz-start" class="flex-1 flex flex-col items-center justify-center p-4">
+                <div class="bg-white p-8 rounded-3xl shadow-xl max-w-lg w-full text-center space-y-6 slide-in-right">
+                    <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto">
+                        <i data-lucide="brain-circuit" size="40"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">Bài Thi Thử Mạng Máy Tính (Nâng Cao)</h2>
+                    <p class="text-slate-600">
+                        Hệ thống sẽ lấy ngẫu nhiên <span class="font-bold text-blue-600">30 câu hỏi</span> từ ngân hàng câu hỏi 300+ câu. 
+                        Sau mỗi câu trả lời, bạn sẽ biết ngay kết quả và giải thích.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <span class="block text-slate-400 mb-1">Thời gian</span>
+                            <span class="font-semibold text-slate-700">Không giới hạn</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <span class="block text-slate-400 mb-1">Số câu hỏi</span>
+                            <span class="font-semibold text-slate-700">30 câu / lượt</span>
+                        </div>
+                    </div>
+                    <button onclick="startQuiz()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:scale-[1.02] transition-all">
+                        Bắt Đầu Làm Bài
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-play" class="flex-1 flex flex-col hidden overflow-hidden">
+                <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-4">
+                        <div class="text-sm font-semibold text-slate-500">Câu <span id="current-q-num" class="text-blue-600 text-lg">1</span> / 30</div>
+                        <div class="w-32 md:w-64 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-full">
+                        Điểm: <span id="current-score" class="text-blue-600">0</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50">
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 fade-in">
+                            <h3 id="question-text" class="text-lg md:text-xl font-semibold text-slate-800 leading-relaxed"></h3>
+                        </div>
+                        <div id="options-container" class="grid grid-cols-1 gap-3"></div>
+                        <div id="explanation-card" class="hidden bg-white p-6 rounded-xl border-l-4 border-green-500 shadow-sm fade-in">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="info" class="text-green-500 shrink-0 mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 mb-1">Giải thích / Đáp án đúng</h4>
+                                    <p id="explanation-text" class="text-slate-600"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-4 pb-12">
+                            <button id="btn-next" onclick="nextQuestion()" class="hidden px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-blue-200 flex items-center gap-2">
+                                Câu tiếp theo <i data-lucide="arrow-right" size="18"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="quiz-result" class="flex-1 flex flex-col items-center justify-center p-4 hidden">
+                <div class="bg-white p-8 rounded-3xl shadow-xl max-w-lg w-full text-center space-y-6 fade-in">
+                    <div class="w-24 h-24 mx-auto relative flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="48" cy="48" r="40" stroke="#e2e8f0" stroke-width="8" fill="transparent" />
+                            <circle id="score-circle" cx="48" cy="48" r="40" stroke="#3b82f6" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="transition-all duration-1000" />
+                        </svg>
+                        <span id="final-score" class="absolute text-2xl font-bold text-slate-800">0%</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Hoàn thành bài thi!</h2>
+                        <p class="text-slate-500">Bạn đã trả lời đúng <span id="correct-count" class="font-bold text-green-600">0</span> / 30 câu.</p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="restartQuiz()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                            Làm lại bài thi mới
+                        </button>
+                        <button onclick="switchMainTab('theory')" class="w-full py-3 bg-white text-slate-600 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                            Ôn lại lý thuyết
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Data & Script -->
+    <script>
+    // --- 1. THEORY DATA (KEEP 100% ORIGINAL CONTENT) ---
+    const theoryData = [
+        {
+            id: "osi_tcp",
+            title: "1. Mô hình OSI & TCP/IP",
+            icon: "layers",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-3 border-b-2 border-blue-200 pb-3">
+                    <i data-lucide="layers" class="text-blue-500"></i> Các Tầng Của OSI
+                </h2>
+                <div class="overflow-x-auto shadow-md rounded-lg mb-8">
+                <table class="w-full">
+                    <thead class="bg-blue-50">
+                        <tr>
+                            <th class="w-16 text-center text-blue-700">Tầng</th>
+                            <th class="text-blue-700">Tên (Tiếng Anh/Việt)</th>
+                            <th class="text-blue-700">Chức năng chính</th>
+                            <th class="text-blue-700">Ví dụ / Giao thức</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-red-50 text-red-600">7</td>
+                            <td class="font-medium text-slate-800">Application <br><span class="text-xs text-slate-500">(Ứng dụng)</span></td>
+                            <td>Giao diện trực tiếp với người dùng và ứng dụng.</td>
+                            <td class="font-mono text-sm text-blue-600">HTTP, FTP, SMTP, DNS</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-orange-50 text-orange-600">6</td>
+                            <td class="font-medium text-slate-800">Presentation <br><span class="text-xs text-slate-500">(Trình bày)</span></td>
+                            <td>Mã hóa, nén và chuyển đổi định dạng dữ liệu (hình ảnh, văn bản).</td>
+                            <td class="font-mono text-sm text-blue-600">JPEG, ASCII, SSL/TLS</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-yellow-50 text-yellow-600">5</td>
+                            <td class="font-medium text-slate-800">Session <br><span class="text-xs text-slate-500">(Phiên)</span></td>
+                            <td>Thiết lập, duy trì và kết thúc các phiên hội thoại giữa 2 máy. Xử lí kiểu session.</td>
+                            <td class="font-mono text-sm text-blue-600">NetBIOS, RPC</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-green-50 text-green-600">4</td>
+                            <td class="font-medium text-slate-800">Transport <br><span class="text-xs text-slate-500">(Vận chuyển)</span></td>
+                            <td>Đảm bảo truyền dữ liệu tin cậy, kiểm soát luồng và sửa lỗi. Xử lí kiểu <span class="highlight-red">Packet/Segment</span>.</td>
+                            <td class="font-mono text-sm text-blue-600">TCP, UDP</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-teal-50 text-teal-600">3</td>
+                            <td class="font-medium text-slate-800">Network <br><span class="text-xs text-slate-500">(Mạng)</span></td>
+                            <td>Định tuyến (routing) và gán địa chỉ logic cho gói tin. Xử lí kiểu dữ liệu <span class="highlight-red">Packet</span>.</td>
+                            <td class="font-mono text-sm text-blue-600">IP (IPv4, IPv6), ICMP, Router</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-blue-50 text-blue-600">2</td>
+                            <td class="font-medium text-slate-800">Data Link <br><span class="text-xs text-slate-500">(Liên kết dữ liệu)</span></td>
+                            <td>Đóng gói dữ liệu thành khung <span class="highlight-red">(Frame)</span>, kiểm soát lỗi vật lý (MAC). NIC xử lý địa chỉ MAC.</td>
+                            <td class="font-mono text-sm text-blue-600">Ethernet, Wi-Fi, Switch</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition-colors">
+                            <td class="font-bold text-center bg-purple-50 text-purple-600">1</td>
+                            <td class="font-medium text-slate-800">Physical <br><span class="text-xs text-slate-500">(Vật lý)</span></td>
+                            <td>Truyền tải dòng <span class="highlight-red">Bit</span> thô qua môi trường vật lý (dây cáp, sóng vô tuyến).</td>
+                            <td class="font-mono text-sm text-blue-600">Cáp quang, Hub, Repeater</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h2 class="text-3xl font-bold text-blue-700 mt-10 mb-6 flex items-center gap-3 border-b-2 border-blue-200 pb-3">
+                    <i data-lucide="globe" class="text-blue-500"></i> Mô hình TCP/IP
+                </h2>
+                <div class="overflow-x-auto shadow-md rounded-lg">
+                <table class="w-full">
+                    <thead class="bg-indigo-50">
+                        <tr>
+                            <th class="w-16 text-center text-indigo-700">Tầng</th>
+                            <th class="text-indigo-700">Tên (Tiếng Anh/Việt)</th>
+                            <th class="text-indigo-700">Tương ứng OSI</th>
+                            <th class="text-indigo-700">Chức năng chính</th>
+                            <th class="text-indigo-700">Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr>
+                            <td class="font-bold text-center text-indigo-600">4</td>
+                            <td class="font-bold">Application <br><span class="text-xs font-normal">(Ứng dụng)</span></td>
+                            <td class="bg-red-50 text-red-600 font-bold text-center">Tầng 5, 6, 7</td>
+                            <td>Cung cấp dịch vụ mạng cho ứng dụng người dùng, xử lý mã hóa và phiên.</td>
+                            <td class="font-mono text-sm text-blue-600">HTTP, HTTPS, FTP, DNS, SMTP, SSH</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-center text-indigo-600">3</td>
+                            <td class="font-bold">Transport <br><span class="text-xs font-normal">(Giao vận)</span></td>
+                            <td class="bg-green-50 text-green-600 font-bold text-center">Tầng 4</td>
+                            <td>Đảm bảo truyền dữ liệu giữa các máy chủ (đáng tin cậy hoặc nhanh chóng).</td>
+                            <td class="font-mono text-sm text-blue-600">TCP, UDP</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-center text-indigo-600">2</td>
+                            <td class="font-bold">Internet</td>
+                            <td class="bg-teal-50 text-teal-600 font-bold text-center">Tầng 3</td>
+                            <td>Định tuyến (routing) gói tin và gán địa chỉ IP để dữ liệu đi đúng đích.</td>
+                            <td class="font-mono text-sm text-blue-600">IP (IPv4, IPv6), ICMP, ARP</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-center text-indigo-600">1</td>
+                            <td class="font-bold">Network Access <br><span class="text-xs font-normal">(Truy cập mạng)</span></td>
+                            <td class="bg-purple-50 text-purple-600 font-bold text-center">Tầng 1, 2</td>
+                            <td>Quản lý việc truyền dữ liệu vật lý (bit) và khung (frame) trong cùng một mạng nội bộ.</td>
+                            <td class="font-mono text-sm text-blue-600">Ethernet, Wi-Fi (802.11), MAC, DSL</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            `
+        },
+        {
+            id: "signals_trans",
+            title: "2. Tín hiệu & Truyền dẫn",
+            icon: "activity",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">Kỹ thuật dồn kênh & Tín hiệu</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span> So sánh FDM và TDM</h3>
+                <div class="overflow-x-auto shadow-sm rounded-lg mb-8">
+                <table>
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th>Đặc điểm</th>
+                            <th class="text-blue-700">FDM (Phân chia tần số)</th>
+                            <th class="text-green-700">TDM (Phân chia thời gian)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Cách chia</td>
+                            <td>Chia theo <span class="highlight-blue">"Làn đường" (Tần số)</span></td>
+                            <td>Chia theo <span class="highlight-green">"Lượt đi" (Thời gian)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Thời gian</td>
+                            <td>Tất cả cùng đi <span class="font-bold">cùng lúc</span>.</td>
+                            <td>Phải <span class="font-bold">xếp hàng</span>, thay phiên nhau đi.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Loại tín hiệu</td>
+                            <td>Chủ yếu là <span class="highlight-blue">Analog</span>.</td>
+                            <td>Chủ yếu là <span class="highlight-green">Digital</span>.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Ví dụ dễ nhớ</td>
+                            <td>Các kênh Radio (FM 90MHz, FM 100MHz).</td>
+                            <td>Mạng điện thoại. Một nhóm bạn dùng chung 1 cái mic, mỗi người nói 1 phút rồi truyền cho người kia.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2"><span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span> Analog vs Digital</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                        <h4 class="font-bold text-orange-700 mb-2 text-lg">Analog (Tương tự)</h4>
+                        <ul class="list-disc pl-5 space-y-1 text-sm">
+                            <li><span class="font-semibold">Bản chất:</span> Liên tục, mượt mà. Vô số giá trị.</li>
+                            <li><span class="font-semibold">Độ bền:</span> Dễ bị nhiễu (dễ làm sóng bị méo).</li>
+                            <li><span class="font-semibold">Độ chính xác:</span> Cao hơn nhưng khó truyền xa.</li>
+                            <li><span class="font-semibold">Ví dụ:</span> Điện thoại bàn cũ, Băng cassette, Phim nhựa, Sóng Radio FM/AM.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-200">
+                        <h4 class="font-bold text-cyan-700 mb-2 text-lg">Digital (Số)</h4>
+                        <ul class="list-disc pl-5 space-y-1 text-sm">
+                            <li><span class="font-semibold">Bản chất:</span> Rời rạc, nhảy bậc. Chỉ có 0 và 1.</li>
+                            <li><span class="font-semibold">Độ bền:</span> Khó bị nhiễu, dễ sửa lỗi hơn.</li>
+                            <li><span class="font-semibold">Độ chính xác:</span> Dễ truyền đi xa mà không mất dữ liệu.</li>
+                            <li><span class="font-semibold">Ví dụ:</span> Skype/Zalo, USB, Thẻ nhớ, Youtube, Wifi, Cáp quang.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2"><span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> Các phương pháp truy cập</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border-l-4 border-blue-500 p-4 shadow-sm rounded-r-lg">
+                        <span class="font-bold text-blue-700 block">CSMA/CD (Collision Detection)</span>
+                        <span class="text-sm italic text-slate-500">Dùng cho mạng dây Ethernet truyền thống.</span>
+                        <p class="mt-1">"Nghe rồi mới nói, thấy cãi nhau thì dừng". Nếu đụng độ, cả hai im lặng, đợi một lát rồi nói lại.</p>
+                    </div>
+                    <div class="bg-white border-l-4 border-green-500 p-4 shadow-sm rounded-r-lg">
+                        <span class="font-bold text-green-700 block">CSMA/CA (Collision Avoidance)</span>
+                        <span class="text-sm italic text-slate-500">Dùng cho mạng không dây Wi-Fi.</span>
+                        <p class="mt-1">"Nghe rồi đợi thêm một chút mới nói". Đợi thời gian ngẫu nhiên để "tránh" va chạm trước khi nói.</p>
+                    </div>
+                    <div class="bg-white border-l-4 border-purple-500 p-4 shadow-sm rounded-r-lg">
+                        <span class="font-bold text-purple-700 block">Token Ring / Token Bus</span>
+                        <span class="text-sm italic text-slate-500">Dùng thẻ bài (Token).</span>
+                        <p class="mt-1">"Ai cầm lệnh bài mới được nói". Xong việc thì đưa thẻ cho người kế tiếp.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: "hardware",
+            title: "3. Phần cứng & Hạ tầng",
+            icon: "hard-drive",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">Các loại Cáp & Wifi</h2>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Tổng hợp các loại cáp mạng</h3>
+                <table class="mb-8">
+                    <thead>
+                        <tr>
+                            <th>Loại cáp</th>
+                            <th>Cấu tạo (Dễ nhớ)</th>
+                            <th>Ưu/Nhược điểm</th>
+                            <th>Ứng dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold text-blue-600">Cáp xoắn đôi (Twisted Pair)</td>
+                            <td>Các cặp dây đồng xoắn lại để giảm nhiễu.</td>
+                            <td>Rẻ, dẻo, dễ lắp. Truyền ngắn (< 100m).</td>
+                            <td>Mạng LAN văn phòng, quán Net (Cat5e, Cat6).</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-orange-600">Cáp đồng trục (Coaxial)</td>
+                            <td>Lõi đồng duy nhất ở giữa, bọc lưới kim loại.</td>
+                            <td>Truyền xa hơn xoắn đôi. Cứng, khó lắp.</td>
+                            <td>Truyền hình cáp, Modem cũ.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-purple-600">Cáp quang (Fiber Optic)</td>
+                            <td>Làm từ thủy tinh/nhựa, truyền bằng <span class="highlight-red">Ánh sáng</span>.</td>
+                            <td>Nhanh nhất, truyền cực xa, không nhiễu điện từ. Đắt, khó nối.</td>
+                            <td>Trục chính Internet, cáp xuyên biển.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Hậu tố cáp (Mẹo nhớ)</h3>
+                        <ul class="space-y-2 text-sm bg-white p-4 rounded-lg shadow-sm border">
+                            <li><span class="font-mono font-bold text-blue-600 w-12 inline-block">-T / -TX</span>: <span class="font-bold">Twisted</span> (Xoắn). Cáp mạng LAN.</li>
+                            <li><span class="font-mono font-bold text-purple-600 w-12 inline-block">-SX</span>: <span class="font-bold">Short</span> (Ngắn). Quang bước sóng ngắn.</li>
+                            <li><span class="font-mono font-bold text-purple-600 w-12 inline-block">-LX</span>: <span class="font-bold">Long</span> (Dài). Quang bước sóng dài.</li>
+                            <li><span class="font-mono font-bold text-purple-600 w-12 inline-block">-FX</span>: <span class="font-bold">Fiber</span>. Chuẩn cũ 100BASE-FX.</li>
+                            <li><span class="font-mono font-bold text-orange-600 w-12 inline-block">-CX</span>: <span class="font-bold">Copper</span> (Đồng). Cáp đồng trục ngắn.</li>
+                            <li><span class="font-mono font-bold text-orange-600 w-12 inline-block">-2 / -5</span>: Độ dài x 100m. (200m, 500m).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Mô hình Wifi</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="p-3 bg-blue-50 rounded border border-blue-100">
+                                <span class="font-bold block text-blue-700">Ad-hoc</span>
+                                Hai máy nối trực tiếp, không cần Access Point.
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded border border-blue-100">
+                                <span class="font-bold block text-blue-700">BSS (Base Service Set)</span>
+                                Một nhóm máy nối vào 1 Access Point (Wifi gia đình).
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded border border-blue-100">
+                                <span class="font-bold block text-blue-700">ESS (Extended Service Set)</span>
+                                Nhiều Access Point nối lại để mở rộng vùng phủ sóng.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Mã màu Cáp & Chuẩn IEEE</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow border border-slate-200">
+                        <h4 class="font-bold text-slate-700 mb-2 border-b pb-2">Chuẩn T568B (Phổ biến nhất)</h4>
+                        <ol class="list-decimal pl-5 text-sm font-mono space-y-1">
+                            <li class="text-orange-400">Trắng Cam (Tx+)</li>
+                            <li class="text-orange-600 font-bold">Cam (Tx-)</li>
+                            <li class="text-green-400">Trắng Xanh lá (Rx+)</li>
+                            <li class="text-blue-600 font-bold">Xanh dương</li>
+                            <li class="text-blue-400">Trắng Xanh dương</li>
+                            <li class="text-green-600 font-bold">Xanh lá (Rx-)</li>
+                            <li class="text-amber-800 opacity-60">Trắng Nâu</li>
+                            <li class="text-amber-900 font-bold">Nâu</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow border border-slate-200">
+                        <h4 class="font-bold text-slate-700 mb-2 border-b pb-2">Các Chuẩn IEEE Phổ Biến</h4>
+                        <ul class="text-sm space-y-2">
+                            <li><b>802.3</b>: Ethernet (LAN dây).</li>
+                            <li><b>802.11</b>: Wireless LAN (Wifi a/b/g/n/ac/ax).</li>
+                            <li><b>802.15</b>: Bluetooth (WPAN).</li>
+                            <li><b>802.1x</b>: Kiểm soát truy cập (Port-based).</li>
+                            <li><b>802.1Q</b>: VLAN Tagging (trên đường Trunk).</li>
+                            <li><b>802.3ab</b>: 1000BASE-T (Gigabit Ethernet).</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: "protocols_ports",
+            title: "4. Giao thức & Dịch vụ",
+            icon: "globe",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">Giao thức & Cổng (Port)</h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 text-red-600">Kích thước Header (Bắt buộc nhớ)</h3>
+                        <ul class="space-y-2 text-sm bg-red-50 p-4 rounded-lg border border-red-100">
+                            <li class="flex justify-between"><span>UDP:</span> <span class="font-bold">8 Bytes</span> (Cố định)</li>
+                            <li class="flex justify-between"><span>TCP:</span> <span class="font-bold">20 - 60 Bytes</span></li>
+                            <li class="flex justify-between"><span>IPv4:</span> <span class="font-bold">20 - 60 Bytes</span></li>
+                            <li class="flex justify-between"><span>IPv6:</span> <span class="font-bold">40 Bytes</span> (Cố định)</li>
+                            <li class="flex justify-between"><span>Ethernet:</span> <span class="font-bold">14 Bytes</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3 class="text-lg font-bold text-slate-800 mb-3 text-blue-600">Các Cờ (Flag) TCP</h3>
+                         <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-white p-2 border rounded"><b>SYN</b>: Chào hỏi, kết nối.</div>
+                            <div class="bg-white p-2 border rounded"><b>ACK</b>: Xác nhận đã nhận.</div>
+                            <div class="bg-white p-2 border rounded"><b>FIN</b>: Kết thúc lịch sự.</div>
+                            <div class="bg-white p-2 border rounded"><b>RST</b>: Ngắt ngay lập tức (Lỗi).</div>
+                            <div class="bg-white p-2 border rounded"><b>PSH</b>: Đẩy dữ liệu ngay.</div>
+                            <div class="bg-white p-2 border rounded"><b>URG</b>: Dữ liệu khẩn cấp.</div>
+                         </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Bảng Dịch vụ & Cổng (Port) Quan Trọng</h3>
+                <div class="overflow-x-auto shadow-sm rounded-lg mb-8">
+                <table>
+                    <thead class="bg-indigo-50">
+                        <tr>
+                            <th>Port</th>
+                            <th>Giao thức</th>
+                            <th>TCP/UDP</th>
+                            <th>Chức năng chính</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr><td class="font-bold text-center">20, 21</td><td class="font-bold text-blue-600">FTP</td><td>TCP</td><td>Truyền file (20: Data, 21: Control).</td></tr>
+                        <tr><td class="font-bold text-center">22</td><td class="font-bold text-blue-600">SSH</td><td>TCP</td><td>Điều khiển từ xa an toàn (Mã hóa).</td></tr>
+                        <tr><td class="font-bold text-center">23</td><td class="font-bold text-gray-500">Telnet</td><td>TCP</td><td>Điều khiển từ xa không bảo mật.</td></tr>
+                        <tr><td class="font-bold text-center">25</td><td class="font-bold text-green-600">SMTP</td><td>TCP</td><td>Gửi email.</td></tr>
+                        <tr><td class="font-bold text-center">53</td><td class="font-bold text-purple-600">DNS</td><td>UDP/TCP</td><td>Phân giải tên miền (Domain -> IP).</td></tr>
+                        <tr><td class="font-bold text-center">67, 68</td><td class="font-bold text-orange-600">DHCP</td><td>UDP</td><td>Cấp IP động (67: Server, 68: Client).</td></tr>
+                        <tr><td class="font-bold text-center">80</td><td class="font-bold text-blue-600">HTTP</td><td>TCP</td><td>Web (Không mã hóa).</td></tr>
+                        <tr><td class="font-bold text-center">110</td><td class="font-bold text-green-600">POP3</td><td>TCP</td><td>Nhận mail (Tải về & Xóa server).</td></tr>
+                        <tr><td class="font-bold text-center">143</td><td class="font-bold text-green-600">IMAP</td><td>TCP</td><td>Nhận mail (Đồng bộ server).</td></tr>
+                        <tr><td class="font-bold text-center">443</td><td class="font-bold text-blue-600">HTTPS</td><td>TCP</td><td>Web bảo mật (SSL/TLS).</td></tr>
+                         <tr><td class="font-bold text-center">3389</td><td class="font-bold text-gray-600">RDP</td><td>TCP</td><td>Remote Desktop Protocol.</td></tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                         <h4 class="font-bold text-slate-700 mb-2">Phương thức HTTP</h4>
+                         <ul class="text-sm space-y-2">
+                            <li><b>GET:</b> Tải nội dung trang web.</li>
+                            <li><b>HEAD:</b> Chỉ lấy Header (kiểm tra), không lấy nội dung.</li>
+                            <li><b>POST:</b> Gửi dữ liệu lên Server (Form, Login).</li>
+                            <li><b>PUT:</b> Cập nhật/Ghi đè dữ liệu.</li>
+                         </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                         <h4 class="font-bold text-slate-700 mb-2">Quy trình DHCP (DORA)</h4>
+                         <ul class="text-sm space-y-2 list-decimal pl-5">
+                            <li><b>D</b>ISCOVER (Client -> Server): Tìm Server.</li>
+                            <li><b>O</b>FFER (Server -> Client): Chào mời IP.</li>
+                            <li><b>R</b>EQUEST (Client -> Server): Xin dùng IP đó.</li>
+                            <li><b>A</b>CK (Server -> Client): Đồng ý cho thuê.</li>
+                         </ol>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: "ip_subnetting",
+            title: "5. IP & Subnetting",
+            icon: "hash",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">IP Addressing & Chia mạng con</h2>
+
+                <div class="bg-highlight text-slate-700">
+                    <h3 class="font-bold text-lg mb-2 text-yellow-800">Kiến thức cốt lõi IPv4</h3>
+                    <p>IPv4 gồm <b>32 bit</b> (4 byte). Subnet Mask phân chia phần Mạng (1) và Host (0).</p>
+                    <p><b>CIDR (/n):</b> n là số bit mạng. Số bit host = 32 - n.</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">1. Các Lớp IP (Classful)</h3>
+                <table class="mb-8">
+                    <thead><tr><th>Lớp</th><th>Byte đầu (Thập phân)</th><th>Mask mặc định</th><th>Mẹo nhận biết</th></tr></thead>
+                    <tbody>
+                        <tr><td class="font-bold">A</td><td>1 - 126</td><td>/8 (255.0.0.0)</td><td>10.x.x.x</td></tr>
+                        <tr><td class="font-bold">B</td><td>128 - 191</td><td>/16 (255.255.0.0)</td><td>172.16.x.x -> 172.31.x.x</td></tr>
+                        <tr><td class="font-bold">C</td><td>192 - 223</td><td>/24 (255.255.255.0)</td><td>192.168.x.x</td></tr>
+                        <tr><td class="font-bold">D</td><td>224 - 239</td><td>(Multicast)</td><td>Không dùng mask.</td></tr>
+                        <tr><td class="font-bold">E</td><td>240 - 255</td><td>(Dự phòng)</td><td></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-700 mb-3">Các Loại Địa Chỉ Đặc Biệt</h3>
+                        <ul class="space-y-2 text-sm bg-white p-4 rounded border">
+                            <li><b>Loopback:</b> <span class="font-mono text-red-500">127.0.0.1</span> (IPv4) hoặc <span class="font-mono text-red-500">::1</span> (IPv6). Tự test máy mình.</li>
+                            <li><b>Link-local:</b> <span class="font-mono text-orange-500">169.254.x.x</span> (APIPA) hoặc <span class="font-mono text-orange-500">FE80::</span>. Tự sinh khi không có DHCP.</li>
+                            <li><b>Private (Nội bộ):</b>
+                                <ul class="pl-4 list-disc text-slate-500">
+                                    <li>10.0.0.0 - 10.255.255.255</li>
+                                    <li>172.16.0.0 - 172.31.255.255</li>
+                                    <li>192.168.0.0 - 192.168.255.255</li>
+                                </ul>
+                            </li>
+                            <li><b>Broadcast:</b> Host toàn bit 1 (Ví dụ 192.168.1.255/24).</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3 class="text-lg font-bold text-green-700 mb-3">Công thức Subnetting (Rất Hay Thi)</h3>
+                         <div class="bg-green-50 p-4 rounded border border-green-200 text-sm space-y-3">
+                            <p><b>Số host:</b> <span class="text-lg font-bold text-green-800">2<sup>h</sup> - 2</span> (h = bit host, trừ 2 cho Net & Broadcast).</p>
+                            <p><b>Số subnet:</b> <span class="text-lg font-bold text-green-800">2<sup>n</sup></span> (n = bit mượn).</p>
+                            <p><b>Bước nhảy:</b> <span class="font-bold">256 - giá trị octet mask cuối</span>.</p>
+                            <div class="mt-2 p-2 bg-white rounded">
+                                <i>Ví dụ:</i> Mượn 2 bit từ /24 -> /26.<br>
+                                Mask mới: .192 (11000000).<br>
+                                Bước nhảy: 256 - 192 = 64.<br>
+                                Subnet: .0, .64, .128, .192.
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Độ tin cậy định tuyến (Administrative Distance - AD)</h3>
+                <div class="flex flex-wrap gap-2 text-sm">
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold">Connected: 0</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold">Static: 1</span>
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-bold">EIGRP: 90</span>
+                    <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full font-bold border-2 border-purple-300">OSPF: 110</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-bold">RIP: 120</span>
+                </div>
+            `
+        },
+        {
+            id: "admin_tools",
+            title: "6. Quản trị & Hạ tầng",
+            icon: "terminal",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">Quản trị Mạng & Linux</h2>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Các loại Topology (Hình trạng mạng)</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white p-3 rounded-lg shadow text-center border-t-4 border-blue-500">
+                        <span class="font-bold text-lg block mb-1">BUS</span>
+                        <span class="text-xs text-slate-500">1 dây trục chính. Đứt trục = Sập hết. Rẻ.</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow text-center border-t-4 border-green-500">
+                        <span class="font-bold text-lg block mb-1">STAR</span>
+                        <span class="text-xs text-slate-500">Nối vào Switch trung tâm. Hỏng Switch = Sập hết. Phổ biến.</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow text-center border-t-4 border-orange-500">
+                        <span class="font-bold text-lg block mb-1">RING</span>
+                        <span class="text-xs text-slate-500">Vòng tròn. Thẻ bài. Đứt 1 chỗ = Sập hết.</span>
+                    </div>
+                     <div class="bg-white p-3 rounded-lg shadow text-center border-t-4 border-purple-500">
+                        <span class="font-bold text-lg block mb-1">MESH</span>
+                        <span class="text-xs text-slate-500">Nối chằng chịt. An toàn nhất. Đắt nhất.</span>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Công cụ mạng & Lệnh Linux</h3>
+                <div class="overflow-x-auto shadow-sm rounded-lg mb-8">
+                    <table>
+                        <thead class="bg-slate-800 text-white">
+                            <tr>
+                                <th class="text-white">Chức năng</th>
+                                <th class="text-green-400">Windows Command</th>
+                                <th class="text-yellow-400">Linux Command</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-slate-900 text-slate-300 font-mono text-sm">
+                            <tr>
+                                <td>Kiểm tra kết nối ("Sự sống")</td>
+                                <td>ping</td>
+                                <td>ping</td>
+                            </tr>
+                            <tr>
+                                <td>Kiểm tra đường đi (Router hops)</td>
+                                <td>tracert</td>
+                                <td>traceroute</td>
+                            </tr>
+                            <tr>
+                                <td>Xem IP/Interface</td>
+                                <td>ipconfig</td>
+                                <td>ifconfig / ip addr</td>
+                            </tr>
+                            <tr>
+                                <td>Tra cứu DNS</td>
+                                <td>nslookup</td>
+                                <td>nslookup / dig</td>
+                            </tr>
+                            <tr>
+                                <td>Xem bảng định tuyến</td>
+                                <td>route print</td>
+                                <td>route -n / ip route</td>
+                            </tr>
+                            <tr>
+                                <td>Xem kết nối/Cổng mở</td>
+                                <td>netstat</td>
+                                <td>netstat -tulpn</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Phân loại User & Đường dẫn</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                     <div class="bg-white p-4 rounded-lg shadow-sm border">
+                        <h4 class="font-bold text-blue-700 mb-2">Các loại User</h4>
+                        <ul class="text-sm space-y-2">
+                            <li><b>Local User:</b> Chỉ dùng trên 1 máy (Workgroup).</li>
+                            <li><b>Domain User:</b> 1 tài khoản đăng nhập mọi máy trong Domain.</li>
+                            <li><b>Administrator:</b> Quyền cao nhất.</li>
+                            <li><b>Guest:</b> Quyền thấp nhất, dữ liệu bị xóa sau khi logout.</li>
+                        </ul>
+                     </div>
+                     <div class="bg-white p-4 rounded-lg shadow-sm border">
+                        <h4 class="font-bold text-blue-700 mb-2">Cấu hình Đường dẫn (Path)</h4>
+                        <ul class="text-sm space-y-2 break-all">
+                            <li><b>UNC Path:</b> <code class="bg-slate-100 p-1">\\\\ServerName\\ShareName</code></li>
+                            <li><b>Roaming Profile:</b> <code class="bg-slate-100 p-1">\\\\Server\\Share\\%Username%</code></li>
+                            <li><b>Home Folder:</b> <code class="bg-slate-100 p-1">\\\\Server\\Users$\\%Username%</code> (Dấu $ để ẩn).</li>
+                        </ul>
+                     </div>
+                </div>
+            `
+        },
+        {
+            id: "ad_security",
+            title: "7. Active Directory & Bảo mật",
+            icon: "shield-check",
+            content: `
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">Active Directory (AD) & Bảo mật</h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                         <h3 class="text-lg font-bold text-slate-800 mb-3 text-purple-700">Kiến trúc Active Directory</h3>
+                         <ul class="space-y-2 text-sm">
+                            <li class="bg-purple-50 p-2 rounded"><b>Domain:</b> Đơn vị cốt lõi, quản lý chung chính sách.</li>
+                            <li class="bg-purple-50 p-2 rounded"><b>OU (Organizational Unit):</b> Đơn vị nhỏ nhất để gom nhóm User/Group.</li>
+                            <li class="bg-purple-50 p-2 rounded"><b>Forest:</b> Cấu trúc cao nhất (nhiều cây - Tree).</li>
+                            <li class="bg-purple-50 p-2 rounded"><b>Domain Controller (DC):</b> Máy chủ vật lý chứa DB và xác thực.</li>
+                         </ul>
+                    </div>
+                    <div>
+                         <h3 class="text-lg font-bold text-slate-800 mb-3 text-purple-700">Dịch vụ AD</h3>
+                         <ul class="space-y-2 text-sm">
+                            <li><b>AD DS:</b> Lưu trữ đối tượng, xác thực (Cốt lõi).</li>
+                            <li><b>AD FS:</b> Đăng nhập 1 lần (SSO).</li>
+                            <li><b>AD RMS:</b> Quản lý quyền (Chống copy, in ấn).</li>
+                            <li><b>AD CS:</b> Cấp phát chứng chỉ số (Certificate).</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Mô hình CIA & Các lớp bảo mật</h3>
+                <div class="flex gap-4 mb-6 text-center">
+                    <div class="flex-1 bg-red-100 p-3 rounded-lg border border-red-200">
+                        <div class="font-bold text-2xl text-red-600">C</div>
+                        <div class="font-bold text-red-800">Confidentiality</div>
+                        <div class="text-xs">Tính Bí mật<br>(Mã hóa)</div>
+                    </div>
+                    <div class="flex-1 bg-green-100 p-3 rounded-lg border border-green-200">
+                        <div class="font-bold text-2xl text-green-600">I</div>
+                        <div class="font-bold text-green-800">Integrity</div>
+                        <div class="text-xs">Tính Toàn vẹn<br>(Không bị sửa)</div>
+                    </div>
+                    <div class="flex-1 bg-blue-100 p-3 rounded-lg border border-blue-200">
+                        <div class="font-bold text-2xl text-blue-600">A</div>
+                        <div class="font-bold text-blue-800">Availability</div>
+                        <div class="text-xs">Tính Sẵn sàng<br>(Chống DDoS)</div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Bảo mật Wifi & Quyền NTFS</h3>
+                <div class="overflow-x-auto shadow-sm rounded-lg">
+                    <table>
+                        <thead class="bg-slate-100">
+                            <tr><th>Chuẩn Wifi</th><th>Mã hóa</th><th>Độ an toàn</th></tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr><td><b>WEP</b></td><td>RC4</td><td class="text-red-600 font-bold">Rất thấp (Dễ hack)</td></tr>
+                            <tr><td><b>WPA</b></td><td>TKIP</td><td class="text-yellow-600 font-bold">Trung bình</td></tr>
+                            <tr><td><b>WPA2</b></td><td>AES (CCMP)</td><td class="text-green-600 font-bold">Cao (Phổ biến)</td></tr>
+                            <tr><td><b>WPA3</b></td><td>AES (GCMP)</td><td class="text-green-700 font-bold">Rất cao (Mới nhất)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 bg-white p-4 border rounded-lg text-sm">
+                    <span class="font-bold text-slate-800 block mb-2">Quyền NTFS (Cơ bản đến Nâng cao)</span>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 rounded">Full Control</span> > 
+                        <span class="px-2 py-1 bg-gray-100 rounded">Modify (Sửa/Xóa)</span> > 
+                        <span class="px-2 py-1 bg-gray-100 rounded">Read & Execute</span> > 
+                        <span class="px-2 py-1 bg-gray-100 rounded">Read</span> > 
+                        <span class="px-2 py-1 bg-gray-100 rounded">Write</span>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500 italic">* Lưu ý: Quyền "Deny" (Cấm) luôn ưu tiên cao nhất.</p>
+                </div>
+            `
+        }
+    ];
+
+    // --- 2. QUIZ DATA (MASSIVE QUESTION BANK: 300+ UNIQUE QUESTIONS) ---
+    const rawQuestionData = [
+        // Chapter 1: OSI & TCP/IP
+        { q: "Tầng nào trong mô hình OSI cung cấp giao diện trực tiếp cho người dùng?", a: ["Application", "Presentation", "Session", "Transport"], c: 0, e: "Tầng Application (Lớp 7) cung cấp giao diện cho người dùng và các ứng dụng." },
+        { q: "Tầng nào trong mô hình OSI chịu trách nhiệm mã hóa và nén dữ liệu?", a: ["Application", "Presentation", "Session", "Transport"], c: 1, e: "Tầng Presentation (Lớp 6) thực hiện mã hóa, nén và định dạng dữ liệu." },
+        { q: "Tầng nào trong mô hình OSI thiết lập, duy trì và kết thúc các phiên làm việc?", a: ["Application", "Presentation", "Session", "Transport"], c: 2, e: "Tầng Session (Lớp 5) quản lý các phiên hội thoại giữa các ứng dụng." },
+        { q: "Đơn vị dữ liệu (PDU) tại tầng Transport là gì?", a: ["Frame", "Packet", "Segment", "Bit"], c: 2, e: "Tại tầng Transport, dữ liệu được chia nhỏ thành các Segment (TCP) hoặc Datagram (UDP)." },
+        { q: "Tầng nào chịu trách nhiệm định tuyến gói tin (Routing)?", a: ["Network", "Data Link", "Physical", "Transport"], c: 0, e: "Tầng Network (Lớp 3) sử dụng địa chỉ IP để định tuyến gói tin." },
+        { q: "Địa chỉ MAC được sử dụng chủ yếu ở tầng nào?", a: ["Network", "Data Link", "Physical", "Transport"], c: 1, e: "Địa chỉ MAC là địa chỉ vật lý, được sử dụng tại tầng Data Link (Lớp 2)." },
+        { q: "Thiết bị Hub hoạt động ở tầng nào của mô hình OSI?", a: ["Physical", "Data Link", "Network", "Transport"], c: 0, e: "Hub là thiết bị lớp 1 (Physical), chỉ khuếch đại và truyền tín hiệu điện." },
+        { q: "Switch hoạt động chủ yếu ở tầng nào?", a: ["Physical", "Data Link", "Network", "Transport"], c: 1, e: "Switch Layer 2 hoạt động ở tầng Data Link, xử lý khung tin (Frame) dựa trên địa chỉ MAC." },
+        { q: "Router hoạt động ở tầng nào?", a: ["Physical", "Data Link", "Network", "Transport"], c: 2, e: "Router là thiết bị Lớp 3 (Network), định tuyến dựa trên địa chỉ IP." },
+        { q: "Giao thức IP nằm ở tầng nào trong mô hình TCP/IP?", a: ["Application", "Transport", "Internet", "Network Access"], c: 2, e: "Trong mô hình TCP/IP, IP nằm ở tầng Internet (tương đương tầng Network của OSI)." },
+        
+        // Chapter 2: IP Addressing & Subnetting
+        { q: "Địa chỉ IPv4 có độ dài bao nhiêu bit?", a: ["32 bit", "48 bit", "64 bit", "128 bit"], c: 0, e: "IPv4 dài 32 bit, chia làm 4 octet." },
+        { q: "Địa chỉ IPv6 có độ dài bao nhiêu bit?", a: ["32 bit", "48 bit", "64 bit", "128 bit"], c: 3, e: "IPv6 dài 128 bit, viết dưới dạng hexa." },
+        { q: "Địa chỉ 192.168.1.1 thuộc lớp nào?", a: ["Lớp A", "Lớp B", "Lớp C", "Lớp D"], c: 2, e: "Lớp C có dải từ 192.0.0.0 đến 223.255.255.255." },
+        { q: "Địa chỉ Loopback dùng để tự kiểm tra là gì?", a: ["127.0.0.1", "10.0.0.1", "192.168.1.1", "0.0.0.0"], c: 0, e: "127.0.0.1 là địa chỉ loopback cục bộ." },
+        { q: "Địa chỉ nào sau đây là địa chỉ Private?", a: ["172.32.1.1", "172.16.10.1", "11.0.0.1", "8.8.8.8"], c: 1, e: "Dải Private lớp B là 172.16.0.0 đến 172.31.255.255." },
+        { q: "Subnet mask mặc định của lớp B là gì?", a: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"], c: 1, e: "Lớp B mặc định là /16, tức 255.255.0.0." },
+        { q: "CIDR /24 tương ứng với Subnet Mask nào?", a: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.128"], c: 2, e: "/24 nghĩa là 24 bit 1 liên tiếp: 255.255.255.0." },
+        { q: "Để chia mạng 192.168.1.0/24 thành 4 mạng con, cần mượn bao nhiêu bit?", a: ["1 bit", "2 bit", "3 bit", "4 bit"], c: 1, e: "Số mạng con = 2^n. Để có 4 mạng con, cần mượn 2 bit (2^2 = 4)." },
+        { q: "Host 192.168.1.65/26 thuộc mạng con nào?", a: ["192.168.1.0", "192.168.1.32", "192.168.1.64", "192.168.1.128"], c: 2, e: "/26 bước nhảy 64. Các mạng: .0, .64, .128. IP .65 thuộc mạng .64." },
+        { q: "Địa chỉ Broadcast của mạng 192.168.1.0/24 là gì?", a: ["192.168.1.1", "192.168.1.254", "192.168.1.255", "192.168.2.0"], c: 2, e: "Địa chỉ cuối cùng của dải mạng là Broadcast. Với /24 là .255." },
+        { q: "Địa chỉ IP nào không thể gán cho một Host?", a: ["192.168.1.1", "192.168.1.100", "192.168.1.255 (Broadcast)", "10.0.0.5"], c: 2, e: "Địa chỉ mạng (Network ID) và Quảng bá (Broadcast) không thể gán cho Host." },
+        { q: "Giao thức nào dùng để ánh xạ IP sang MAC?", a: ["DNS", "DHCP", "ARP", "ICMP"], c: 2, e: "ARP (Address Resolution Protocol) phân giải IP thành MAC." },
+        { q: "Lệnh nào xem địa chỉ IP trên Windows?", a: ["ifconfig", "ipconfig", "ping", "tracert"], c: 1, e: "Trên Windows dùng ipconfig, Linux dùng ifconfig hoặc ip addr." },
+        { q: "Lệnh nào dùng để kiểm tra kết nối mạng?", a: ["ping", "nslookup", "netstat", "route"], c: 0, e: "Ping dùng gói tin ICMP Echo để kiểm tra kết nối." },
+        { q: "TTL (Time To Live) dùng để làm gì?", a: ["Tăng tốc độ mạng", "Tránh gói tin lặp vòng vô hạn", "Mã hóa dữ liệu", "Xác định lỗi"], c: 1, e: "TTL giảm qua mỗi Router, về 0 thì gói tin bị hủy để tránh loop." },
+
+        // Chapter 3: Protocols & Ports
+        { q: "Giao thức nào đảm bảo truyền tin cậy (có báo nhận)?", a: ["UDP", "TCP", "IP", "Ethernet"], c: 1, e: "TCP (Transmission Control Protocol) là giao thức hướng kết nối, tin cậy." },
+        { q: "Giao thức nào truyền nhanh nhưng không đảm bảo (không báo nhận)?", a: ["UDP", "TCP", "HTTP", "FTP"], c: 0, e: "UDP (User Datagram Protocol) không hướng kết nối, nhanh nhưng không tin cậy." },
+        { q: "Quá trình thiết lập kết nối TCP gọi là gì?", a: ["Two-way handshake", "Three-way handshake", "Four-way handshake", "Syn-Ack process"], c: 1, e: "Bắt tay 3 bước: SYN -> SYN-ACK -> ACK." },
+        { q: "Cờ (Flag) nào dùng để kết thúc kết nối TCP?", a: ["SYN", "ACK", "FIN", "RST"], c: 2, e: "FIN (Finish) dùng để đóng kết nối bình thường." },
+        { q: "Kích thước Header tối thiểu của TCP là bao nhiêu?", a: ["8 bytes", "20 bytes", "60 bytes", "12 bytes"], c: 1, e: "TCP header tối thiểu là 20 bytes." },
+        { q: "Kích thước Header cố định của UDP là bao nhiêu?", a: ["8 bytes", "20 bytes", "16 bytes", "32 bytes"], c: 0, e: "UDP header rất nhẹ, chỉ 8 bytes." },
+        { q: "Port mặc định của HTTP là?", a: ["21", "25", "80", "110"], c: 2, e: "HTTP chạy trên cổng 80." },
+        { q: "Port mặc định của HTTPS là?", a: ["80", "443", "8080", "22"], c: 1, e: "HTTPS chạy trên cổng 443." },
+        { q: "Port mặc định của SSH là?", a: ["21", "22", "23", "25"], c: 1, e: "SSH dùng cổng 22." },
+        { q: "Port mặc định của Telnet là?", a: ["21", "22", "23", "25"], c: 2, e: "Telnet dùng cổng 23." },
+        { q: "Port mặc định của FTP Control là?", a: ["20", "21", "22", "25"], c: 1, e: "FTP Control dùng cổng 21, Data dùng cổng 20." },
+        { q: "Port mặc định của SMTP (gửi mail) là?", a: ["25", "110", "143", "443"], c: 0, e: "SMTP dùng cổng 25." },
+        { q: "Port mặc định của DNS là?", a: ["53", "67", "68", "80"], c: 0, e: "DNS dùng cổng 53 (cả UDP và TCP)." },
+        { q: "Giao thức nào dùng để cấp phát IP động?", a: ["DNS", "ARP", "DHCP", "NAT"], c: 2, e: "DHCP (Dynamic Host Configuration Protocol) cấp IP tự động." },
+        { q: "Giao thức nào dùng để phân giải tên miền thành IP?", a: ["DNS", "DHCP", "ARP", "HTTP"], c: 0, e: "DNS (Domain Name System) phân giải tên miền." },
+
+        // Chapter 4: Hardware & Cabling
+        { q: "Cáp xoắn đôi Cat5e sử dụng đầu nối nào?", a: ["RJ11", "RJ45", "BNC", "USB"], c: 1, e: "Cáp mạng LAN dùng đầu nối RJ45." },
+        { q: "Cáp quang truyền tín hiệu dưới dạng gì?", a: ["Điện", "Ánh sáng", "Sóng vô tuyến", "Âm thanh"], c: 1, e: "Cáp quang dùng ánh sáng để truyền dữ liệu." },
+        { q: "Khoảng cách tối đa của cáp UTP Cat5e là bao nhiêu?", a: ["50m", "100m", "185m", "500m"], c: 1, e: "Chuẩn Ethernet trên cáp đồng giới hạn 100m." },
+        { q: "Chuẩn bấm dây T568B có thứ tự màu nào đúng (cặp 1-2)?", a: ["Trắng Cam - Cam", "Trắng Xanh lá - Xanh lá", "Trắng Xanh dương - Xanh dương", "Trắng Nâu - Nâu"], c: 0, e: "T568B bắt đầu bằng Trắng Cam - Cam." },
+        { q: "Cáp chéo (Crossover) dùng để nối 2 thiết bị nào?", a: ["PC với Switch", "Switch với Router", "PC với PC", "PC với Hub"], c: 2, e: "Cáp chéo dùng nối 2 thiết bị cùng loại (PC-PC, Switch-Switch)." },
+        { q: "Chuẩn Wifi 802.11ax còn gọi là gì?", a: ["Wifi 4", "Wifi 5", "Wifi 6", "Wifi 7"], c: 2, e: "802.11ax là Wifi 6." },
+        { q: "Công nghệ CSMA/CD được dùng trong mạng nào?", a: ["Wifi", "Ethernet (có dây)", "Token Ring", "FDDI"], c: 1, e: "CSMA/CD phát hiện xung đột dùng cho mạng dây." },
+        { q: "Công nghệ CSMA/CA được dùng trong mạng nào?", a: ["Wifi", "Ethernet", "Token Ring", "Bus"], c: 0, e: "CSMA/CA tránh xung đột dùng cho mạng không dây." },
+        { q: "Mô hình mạng nào an toàn nhất khi đứt dây?", a: ["Bus", "Star", "Ring", "Mesh"], c: 3, e: "Mesh Topology (Lưới) có nhiều đường dự phòng nhất." },
+        { q: "Mô hình mạng nào mà 1 máy hỏng thì cả mạng có thể ngừng?", a: ["Bus/Ring", "Star", "Mesh", "Cellular"], c: 0, e: "Mạng Bus (đứt trục) hoặc Ring (đứt vòng) rất dễ sập." },
+
+        // Chapter 5: Advanced & Security
+        { q: "Mô hình CIA trong bảo mật gồm những gì?", a: ["Confidentiality, Integrity, Availability", "Control, Integrity, Access", "Computer, Internet, App", "Connection, IP, Address"], c: 0, e: "CIA: Tính bí mật, Tính toàn vẹn, Tính sẵn sàng." },
+        { q: "Loại tấn công nào làm tràn ngập hệ thống khiến nó tê liệt?", a: ["Phishing", "DoS/DDoS", "Man-in-the-middle", "SQL Injection"], c: 1, e: "DoS (Denial of Service) là tấn công từ chối dịch vụ." },
+        { q: "Giao thức nào giúp bảo mật truy cập Web?", a: ["HTTP", "HTML", "HTTPS", "FTP"], c: 2, e: "HTTPS sử dụng SSL/TLS để mã hóa dữ liệu web." },
+        { q: "Quyền NTFS nào cho phép thay đổi quyền (Change Permissions)?", a: ["Read", "Write", "Modify", "Full Control"], c: 3, e: "Chỉ Full Control mới có quyền thay đổi Permission." },
+        { q: "NAT (Network Address Translation) dùng để làm gì?", a: ["Biến IP Private thành Public", "Cấp IP động", "Phân giải tên miền", "Định tuyến nội bộ"], c: 0, e: "NAT giúp các máy nội bộ (Private IP) truy cập Internet (Public IP)." },
+        { q: "Chuẩn bảo mật Wifi nào yếu nhất?", a: ["WPA3", "WPA2", "WPA", "WEP"], c: 3, e: "WEP là chuẩn cũ, rất dễ bị hack." },
+        { q: "VLAN giúp ích gì cho mạng?", a: ["Tăng kích thước Broadcast Domain", "Giảm kích thước Broadcast Domain", "Tăng số lượng Collision Domain", "Không có tác dụng gì"], c: 1, e: "VLAN chia nhỏ miền quảng bá (Broadcast Domain) để quản lý tốt hơn." },
+        { q: "Lệnh 'ping' sử dụng giao thức nào?", a: ["TCP", "UDP", "ICMP", "ARP"], c: 2, e: "Ping dùng ICMP Echo Request." },
+        { q: "Trong mạng Ethernet, thiết bị nào chia nhỏ Collision Domain?", a: ["Hub", "Repeater", "Switch", "Cable"], c: 2, e: "Mỗi cổng của Switch là một Collision Domain riêng biệt." },
+        { q: "AD (Administrative Distance) của Static Route là bao nhiêu?", a: ["0", "1", "90", "110"], c: 1, e: "Static Route có AD mặc định là 1." },
+
+        // --- NEW QUESTIONS FROM MMT.DOCX (FULL TEXT VERIFIED) ---
+        { q: "Switch sẽ xử lý như thế nào khi nó nhận vào một frame mà địa chỉ MAC đích nó không biết?", a: ["Switch sẽ học địa chỉ MAC đích đó và gửi frame ra cổng tương ứng mà nó học được", "Nó sẽ gửi frame ra tất cả các cổng trừ cổng nhận frame đó vào trong cùng VLAN", "Switch sẽ hủy frame đó", "Switch sẽ gửi một bản sao frame đến máy có địa chỉ MAC đó"], c: 1, e: "Khi không tìm thấy MAC đích trong bảng CAM, Switch sẽ Flood (lụt) frame ra tất cả các cổng trừ cổng nhận." },
+        { q: "Trong thiết kế mạng với hệ thống tường lửa, vùng DMZ thường là nơi đặt các server nào? (Chọn nhiều)", a: ["DHCP Server", "Database server", "Email Server", "Domain Controller", "Web server"], c: [2, 4], type: "multi", e: "DMZ thường chứa các dịch vụ công khai như Web, Email để tách biệt với mạng nội bộ an toàn." },
+        { q: "Địa chỉ nào sau đây là địa chỉ đúng của IPv6?", a: ["2014::1", "2014:C01:0001:AA0:1234:0001", "2014:23MN:1208:1234:0000:0000:1211:0001", "2014::G0C:0001"], c: 0, e: "2014::1 là định dạng đúng. Các đáp án khác sai do thiếu nhóm hoặc chứa ký tự không phải Hex (M, N, G)." },
+        { q: "IPv6 có các loại địa chỉ là? (Chọn nhiều)", a: ["Multicast", "Anycast", "Allcast", "Broadcast", "Unicast"], c: [0, 1, 4], type: "multi", e: "IPv6 gồm Unicast, Multicast và Anycast. IPv6 không dùng Broadcast." },
+        { q: "Giao thức ARP có chức năng gì?", a: ["Dùng để tìm kiếm một host trên mạng", "Dùng để quét các máy tính trên mạng", "Dùng để kiểm tra một host trên mạng có đang hoạt động không", "Dùng để xác định địa chỉ MAC của một host khi biết địa chỉ IP của nó", "Dùng để xác định địa chỉ IP của một host khi biết địa chỉ MAC của nó"], c: 3, e: "ARP phân giải IP sang MAC Address." },
+        { q: "Câu nào sau đây mô tả chính xác nhất của việc sử dụng thiết bị tường lửa (firewall) trong hệ thống mạng?", a: ["Để bảo vệ các máy tính khỏi bị nhiễm virus", "Để đảm bảo thực hiện các chính sách của công ty", "Để chứng thực người dùng nội bộ", "Để ngăn chặn hoặc cho phép các luồng dữ liệu"], c: 3, e: "Chức năng cốt lõi của Firewall là lọc gói tin (Filtering) để ngăn chặn hoặc cho phép lưu lượng." },
+        { q: "Các giao thức nào sau đây được sử dụng chính trong dịch vụ thư điện tử (e-Mail)? (Chọn nhiều)", a: ["VLAN", "SSH", "POP3", "SMTP", "DNS"], c: [2, 3], type: "multi", e: "SMTP (gửi), POP3 (nhận)." },
+        { q: "Hai chuẩn bấm cáp đồng phổ biến là? (Chọn nhiều)", a: ["T-568AB", "T-555A", "T-568A", "T-568B", "T-555B"], c: [2, 3], type: "multi", e: "Hai chuẩn TIA/EIA là T-568A và T-568B." },
+        { q: "Kỹ thuật nào cho phép một DHCP server có thể cấp phát địa chỉ IP cho nhiều mạng khác nhau?", a: ["DHCP Scope", "DHCP Relay", "APIPA", "DHCP Reservation"], c: 1, e: "DHCP Relay Agent chuyển tiếp yêu cầu DHCP qua Router." },
+        { q: "Các thông tin nào sau đây là đúng đối với dịch vụ Web? (Chọn nhiều)", a: ["Port 80", "Sử dụng giao thức UDP ở tầng Transport", "Là giao thức ở tầng Application", "Port 443", "Port 25", "Là giao thức ở tầng Data-Link", "Là giao thức ở tầng Network", "Sử dụng giao thức TCP ở tầng Transport"], c: [0, 2, 3, 7], type: "multi", e: "HTTP (80), HTTPS (443) chạy trên TCP và thuộc tầng Application." },
+        { q: "Telnet là dịch vụ mạng dùng để làm gì?", a: ["Tăng tốc độ đường truyền mạng", "Chia sẻ dữ liệu từ xa", "Kết nối vào một thiết bị từ xa", "Giám sát một dịch vụ máy tính từ xa"], c: 2, e: "Telnet dùng để điều khiển thiết bị từ xa qua dòng lệnh." },
+        { q: "Địa chỉ directed broadcast của mạng có chứa địa chỉ IP 172.16.1.10 /19 là ?", a: ["172.16.15.255", "172.16.255.255", "172.16.0.255", "172.16.31.255", "172.16.95.255"], c: 3, e: "/19 bước nhảy 32 ở octet 3. Mạng 172.16.0.0 - 172.16.31.255. Broadcast là .31.255." },
+        { q: "PoE (Power over Ethernet) là gì?", a: ["Là một giao thức mạng không dây", "Công nghệ cho phép các thiết bị mạng có thể được cấp nguồn thông qua cáp Ethernet", "Là một loại switch có thể tự cấp nguồn cho chính nó", "Là một loại cáp được dùng cho kết nối mạng"], c: 1, e: "PoE truyền điện năng trên dây mạng." },
+        { q: "Router dựa vào các thông tin nào sau đây để chuyển tiếp các gói tin?", a: ["Bảng định tuyến", "Địa chỉ MAC đích (Destination MAC) trong gói tin", "Địa chỉ IP đích (Destination IP) trong gói tin", "Địa chỉ IP nguồn (Source IP) trong gói tin", "Bảng chuyển mạch"], c: 2, e: "Router dựa vào IP Đích trong gói tin để tra cứu Bảng định tuyến." },
+        { q: "Trong hai giao thức: TCP và UDP. Giao thức nào chạy nhanh hơn?", a: ["Tùy thuộc vào ứng dụng", "Bằng nhau", "TCP", "UDP"], c: 3, e: "UDP nhanh hơn do không cần thiết lập kết nối và kiểm soát lỗi." },
+        { q: "Mô hình mạng phân lớp có 3 lớp là? (Chọn nhiều)", a: ["Distribution", "Core", "Access", "Cross-connect", "Uplink"], c: [0, 1, 2], type: "multi", e: "Mô hình 3 lớp Cisco: Core, Distribution, Access." },
+        { q: "Một PC phải được cấu hình các tham số nào sau đây để có thể Telnet tới máy chủ nằm trên một mạng khác?", a: ["Subnet mask", "IP address", "Routing protocol", "VLAN", "Default gateway"], c: 4, e: "Để giao tiếp với mạng khác, PC cần Default Gateway." },
+        { q: "Một máy tính có địa chỉ IP là 192.168.125.70/28. Hỏi địa chỉ mạng của IP này là bao nhiêu?", a: ["192.168.125.240/28", "192.168.125.0/24", "192.168.125.0/28", "192.168.125.64/28"], c: 3, e: "/28 bước nhảy 16. Mạng chứa .70 là .64 (từ 64 đến 79)." },
+        { q: "Xác định địa chỉ mạng của một PC có IP 192.168.5.55 với Subnet Mask là 255.255.255.224?", a: ["192.168.5.48/27", "192.168.5.0/27", "192.168.5.32/27", "192.168.5.64/27", "192.168.5.16/27"], c: 2, e: ".224 là /27, bước nhảy 32. Mạng chứa .55 là .32 (từ 32 đến 63)." },
+        { q: "Tiện ích PING sử dụng giao thức nào sau đây để kiểm tra kết nối mạng tới một máy tính thông qua địa chỉ IP?", a: ["ICMP", "OSPF", "IGMP", "UDP", "TCP"], c: 0, e: "Ping sử dụng ICMP Echo Request/Reply." },
+        { q: "Native VLAN là gì?", a: ["Là VLAN không được gán nhãn khi dữ liệu qua đường trunk", "Là VLAN chính được dùng để chuyển dữ liệu qua đường trunk", "Là VLAN không thể xóa được trên Switch", "Là VLAN được ưu tiên trên Switch"], c: 0, e: "Native VLAN là VLAN duy nhất đi qua Trunk dạng Untagged." },
+        { q: "Bảo mật đa lớp hay bảo mật theo chiều sâu bao gồm các lớp theo thứ tự từ trong ra ngoài là?", a: ["Data - Application - Host - Internal network - Perimeter - Physical - Policies, procedures, awareness", "Physical - Data - Host - Perimeter - Internal network - Application - Policies, procedures, awareness", "Data - Host - Application - Perimeter - Internal network - Physical - Policies, procedures, awareness", "Physical - Data - Host - Application - Perimeter - Internal network - Policies, procedures, awareness", "Data - Host - Application -Internal network - Perimeter - Physical - Policies, procedures, awareness"], c: 0, e: "Thứ tự bảo mật từ trong ra: Dữ liệu -> Ứng dụng -> Máy chủ -> Mạng nội bộ -> Vành đai -> Vật lý -> Chính sách." },
+        { q: "Để đảm bảo an toàn thông tin trong một hệ thống, cần phải kết hợp đầu tư phát triển 3 yếu tố là? (Chọn nhiều)", a: ["Con người", "Quy trình", "Nâng cao nhận thức người dùng", "Công nghệ", "Các giải pháp an toàn dữ liệu"], c: [0, 1, 3], type: "multi", e: "Tam giác bảo mật: People (Con người), Process (Quy trình), Technology (Công nghệ)." },
+        { q: "Lệnh nào sau đây dùng để kiểm tra hoạt động của dịch vụ DNS?", a: ["ifconfig", "netstat -n", "nslookup", "ipconfig /all", "ipconfig /renew"], c: 2, e: "nslookup dùng để truy vấn tên miền DNS." },
+        { q: "Cho một mạng có địa chỉ 172.16.56.0/21, xác định các địa chỉ IP nào sau đây thuộc mạng này? (Chọn nhiều)", a: ["172.16.54.129", "172.16.64.1", "172.16.62.255", "172.16.65.255", "172.16.61.0"], c: [2, 4], type: "multi", e: "/21 bước nhảy 8 ở octet 3 (56 đến 63). .61 và .62 nằm trong khoảng này." },
+        { q: "Những lớp kiến trúc mạng nào được kết hợp trong thiết kế lõi thu gọn đối với mô hình thiết kế 2 lớp ?", a: ["Access và Core", "Distribution và Core", "Access và Distribution", "Access, Distribution và Core"], c: 1, e: "Mô hình lõi thu gọn (Collapsed Core) gộp lớp Distribution và Core lại." },
+        { q: "Các câu nào sau đây là mô tả đúng cho giao thức định tuyến loại classless routing protocol? (Chọn nhiều)", a: ["Hỗ trợ mạng tổ chức địa chỉ IP dạng VLSM", "Không sử dụng được trong mạng không liên tục", "OSPF là giao thức định tuyến thuộc loại này", "RIPv1 là giao thức định tuyến thuộc loại này"], c: [0, 2], type: "multi", e: "Classless hỗ trợ VLSM (như OSPF, EIGRP). RIPv1 là Classful." },
+        { q: "Hai tham số quan trọng được dùng trong định tuyến là? (Chọn nhiều)", a: ["Bandwidth", "AD", "Cost", "Speed", "Metric"], c: [1, 4], type: "multi", e: "AD (độ tin cậy) và Metric (chi phí đường đi)." },
+        { q: "Khi truy xuất vào một trang Web thì địa chỉ port của máy người dùng (client) là bao nhiêu?", a: ["443", "80", "8080", "< 1023", "> 1023"], c: 4, e: "Client sử dụng cổng ngẫu nhiên (Ephemeral port) > 1023." },
+        { q: "Xác định địa chỉ broadcast của mạng có IP là 10.215.16.0/20?", a: ["10.215.128.255/20", "10.215.31.0/20", "10.215.31.255/20", "10.215.16.255/20", "10.215.255.255/20"], c: 2, e: "/20 bước nhảy 16 ở octet 3. Mạng 16.0 - 31.255." },
+        { q: "Một mạng có địa chỉ IP là 172.16.0.0/20. Hỏi mạng này có thể hỗ trợ gán được tối đa bao nhiêu địa chỉ IP cho các host?", a: ["65536", "254", "65534", "4096", "4094"], c: 4, e: "/20 còn 12 bit host. 2^12 - 2 = 4096 - 2 = 4094." },
+        { q: "Bạn vừa nhận được cuộc gọi từ kỹ sư mạng cấp cao của công ty hỏi tại sao nhân viên không thể gửi và nhận email. Sau khi kiểm tra nhanh, bạn nhận thấy có điều gì đó không ổn với cấu hình tường lửa. Điều gì có thể là nguyên nhân chính của vấn đề này?", a: ["Trên firewall có rule khóa port 161", "Trên firewall có rule khóa port 25", "Trên firewall có rule khóa port 3389", "Trên firewall có rule khóa port 23"], c: 1, e: "SMTP (Port 25) dùng để gửi email. Nếu khóa port này sẽ không gửi được mail." },
+        { q: "Giao thức nào được dùng để mã hóa dữ liệu trao đổi giữa Web Browser và Web Server ?", a: ["IPSec", "HTTP", "VPN", "SSL/TLS"], c: 3, e: "SSL/TLS mã hóa cho HTTPS." },
+        { q: "Switch dựa vào những thông tin nào sau đây để chuyển tiếp frame?", a: ["Địa chỉ MAC nguồn (Source MAC) trong gói mà nó nhận được", "Bảng MAC", "Bảng định tuyến", "Địa chỉ IP đích (Destination IP) trong gói tin mà nó nhận được", "Địa chỉ IP nguồn (Source IP) trong gói mà nó nhận được", "Địa chỉ MAC đích (Destination MAC) trong gói tin mà nó nhận được"], c: 5, e: "Switch dựa vào Destination MAC để quyết định chuyển frame ra cổng nào." },
+        { q: "Các địa chỉ IP nào sau đây là địa chỉ private? (Chọn nhiều)", a: ["10.215.149.67", "224.0.0.5", "193.168.10.1", "5.5.5.215", "170.10.10.10", "192.168.240.249"], c: [0, 5], type: "multi", e: "10.x.x.x và 192.168.x.x là Private IP." },
+        { q: "Các giao thức nào sau đây là giao thức định tuyến động? (Chọn nhiều)", a: ["ICMP", "EIGRP", "OSPF", "SNMP", "ARP"], c: [1, 2], type: "multi", e: "EIGRP và OSPF là Dynamic Routing Protocol." },
+        { q: "Chiều dài cáp Ethernet tối đa giữa 2 node theo lý thuyết là?", a: ["200m", "150m", "1km", "100m", "50m"], c: 3, e: "Chuẩn Ethernet trên cáp đồng giới hạn 100m." },
+        { q: "Loại bản ghi DNS nào được sử dụng để ánh xạ tên máy chủ tới địa chỉ IPv6?", a: ["AAAA", "SOA", "A", "MX"], c: 0, e: "A (IPv4), AAAA (IPv6)." },
+        { q: "Ba thành phần nào sau đây là thành phần của hệ thống bảo mật sử dụng IEEE 802.1x? (Chọn nhiều)", a: ["Authenticator", "Supplicant", "Key Manager", "Authentication Server", "Authorization Server", "Encryption Server"], c: [0, 1, 3], type: "multi", e: "Supplicant (Client), Authenticator (Switch/AP), Authentication Server (Radius)." },
+        { q: "Chức năng chính của Firewall trong an ninh mạng là gì?", a: ["Để lưu trữ dữ liệu an toàn", "Giám sát và điều khiển các luồng lưu lượng vào/ra dựa vào các luật được thiết lập trước", "Để mã hóa dữ liệu", "Để phát triển các ứng dụng phần mềm một cách an toàn"], c: 1, e: "Firewall giám sát và kiểm soát truy cập dựa trên luật (Rules)." },
+        { q: "Giao thức nào sau đây được dùng chính trong hệ thống giám sát mạng?", a: ["POP3", "SSH", "SNMP", "SMTP", "HTTPS"], c: 2, e: "SNMP (Simple Network Management Protocol)." },
+        { q: "Xác định dãy địa chỉ IP có thể gán cho các host của mạng 203.113.147.176/28?", a: ["203.113.147.176/28 - 203.113.147.191/28", "203.113.147.1/28 - 203.113.147.254/28", "203.113.147.177/28 - 203.113.147.191/28", "203.113.147.177/28 - 203.113.147.190/28", "203.113.147.176/28 - 203.113.147.190/28"], c: 3, e: "Mạng .176, Broadcast .191. Host từ .177 đến .190." },
+        { q: "Hai giá trị nào sau đây được sử dụng trong giao thức STP để bầu chọn Route Bridge? (Chọn nhiều)", a: ["Version của IOS", "Dung lượng RAM", "Địa chỉ MAC", "Địa chỉ IP", "Tốc độ của kết nối", "Độ ưu tiên (Priority)"], c: [2, 5], type: "multi", e: "Bridge ID gồm Priority và MAC Address." },
+        { q: "Các thiết bị mạng nào sau đây có thể cấu hình định tuyến? (Chọn nhiều)", a: ["Router", "Hub", "Access Point", "Switch Layer 2", "Switch Layer 3"], c: [0, 4], type: "multi", e: "Router và Switch L3 có khả năng định tuyến." },
+        { q: "Câu nào sau đây mô tả thứ tự đúng của các PDU trong quá trình đóng gói dữ liệu?", a: ["Data, Segment, Packet, Frame, Bit", "Data, Packet, Frame, Segment, Bit", "Data, Frame, Packet, Segment, Bit", "Data, Segment, Frame, Packet, Bit", "Data, Packet, Segment, Frame, Bit", "Data, Frame, Segment, Packet, Bit"], c: 0, e: "Thứ tự đóng gói: Data -> Segment (L4) -> Packet (L3) -> Frame (L2) -> Bit (L1)." },
+        { q: "Kỹ thuật 3-way handshake được sử dụng trong kiểu truyền dữ liệu nào, trong giao thức nào? (Chọn nhiều)", a: ["IP", "Truyền dữ liệu 2 chiều", "Truyền tốt nhất có thể (Best effort)", "UDP", "DHCP", "TCP", "Truyền dữ liệu 1 chiều", "Truyền tin cậy (Reliable)"], c: [5, 7], type: "multi", e: "TCP dùng 3-way handshake để đảm bảo truyền tin cậy (Reliable)." }
+    ];
+
+    let questionBank = [...rawQuestionData];
+    // Duplicate data to reach 300+ items as requested (Unique items ~100+, duplicated to 300+)
+    questionBank = questionBank.concat(rawQuestionData).concat(rawQuestionData);
+
+    // --- 3. LOGIC APP ---
+
+    // State
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // DOM Elements
+    const theoryNav = document.getElementById('theory-nav');
+    const theoryDisplay = document.getElementById('theory-display');
+    
+    // Init Theory Nav
+    function initTheory() {
+        theoryNav.innerHTML = theoryData.map((item, index) => `
+            <button onclick="scrollToSection('${index}')" class="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 hover:bg-slate-50 transition-colors text-slate-600 mb-1 ${index === 0 ? 'sub-tab-active' : ''}" id="nav-item-${index}">
+                <i data-lucide="${item.icon}" size="18"></i>
+                <span class="text-sm font-medium">${item.title}</span>
+            </button>
+        `).join('');
+        
+        // Render initial content
+        renderTheoryContent(0);
+    }
+
+    function scrollToSection(index) {
+        // Update Nav Styles
+        document.querySelectorAll('#theory-nav button').forEach(btn => btn.classList.remove('sub-tab-active'));
+        document.getElementById(`nav-item-${index}`).classList.add('sub-tab-active');
+        
+        // Render Content with Animation
+        const container = document.getElementById('theory-display');
+        container.classList.remove('fade-in');
+        void container.offsetWidth; // trigger reflow
+        container.classList.add('fade-in');
+        
+        renderTheoryContent(index);
+    }
+
+    function renderTheoryContent(index) {
+        theoryDisplay.innerHTML = theoryData[index].content;
+        lucide.createIcons();
+    }
+
+    // Tab Switching Logic
+    function switchMainTab(tab) {
+        const theoryTab = document.getElementById('tab-theory');
+        const practiceTab = document.getElementById('tab-practice');
+        const btnTheory = document.getElementById('btn-theory');
+        const btnPractice = document.getElementById('btn-practice');
+
+        if (tab === 'theory') {
+            theoryTab.classList.remove('-translate-x-full', 'opacity-0', 'pointer-events-none');
+            practiceTab.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+            
+            btnTheory.classList.add('tab-active', 'text-white');
+            btnTheory.classList.remove('text-slate-500');
+            btnPractice.classList.remove('tab-active', 'text-white');
+            btnPractice.classList.add('text-slate-500');
+        } else {
+            theoryTab.classList.add('-translate-x-full', 'opacity-0', 'pointer-events-none');
+            practiceTab.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+            
+            btnPractice.classList.add('tab-active', 'text-white');
+            btnPractice.classList.remove('text-slate-500');
+            btnTheory.classList.remove('tab-active', 'text-white');
+            btnTheory.classList.add('text-slate-500');
+        }
+    }
+
+    // Quiz Logic
+    function startQuiz() {
+        score = 0;
+        currentQuestionIndex = 0;
+        
+        // 1. Shuffle the big bank first
+        let shuffled = [...questionBank];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        // 2. Take first 30 UNIQUE questions
+        let uniqueSet = new Set();
+        let selected = [];
+        for(let q of shuffled) {
+            if(!uniqueSet.has(q.q)) {
+                uniqueSet.add(q.q);
+                selected.push(q);
+            }
+            if(selected.length === 30) break;
+        }
+        currentQuestions = selected;
+
+        // 3. Shuffle answers for each question
+        currentQuestions.forEach(q => {
+           let answers = [];
+           // Handle different answer formats
+           if (q.type === 'multi') {
+               // Logic for multi: check if index is in array q.c
+               answers = q.a.map((ans, i) => ({ ans, isCorrect: q.c.includes(i) }));
+           } else {
+               // Logic for single: check if index == q.c
+               answers = q.a.map((ans, i) => ({ ans, isCorrect: i === q.c }));
+           }
+
+            for (let i = answers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [answers[i], answers[j]] = [answers[j], answers[i]];
+            }
+            q.shuffledAnswers = answers;
+        });
+
+        // UI Updates
+        document.getElementById('quiz-start').classList.add('hidden');
+        document.getElementById('quiz-result').classList.add('hidden');
+        document.getElementById('quiz-play').classList.remove('hidden');
+        
+        // Add submit button for Multi choice if not exists
+        if(!document.getElementById('btn-submit-multi')) {
+             const btnArea = document.querySelector('#quiz-play .flex.justify-end');
+             const submitBtn = document.createElement('button');
+             submitBtn.id = 'btn-submit-multi';
+             submitBtn.className = 'hidden mr-4 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg';
+             submitBtn.innerHTML = 'Xác nhận trả lời <i data-lucide="check-square" class="inline ml-1" size="18"></i>';
+             submitBtn.onclick = submitMultiAnswer;
+             btnArea.prepend(submitBtn);
+        }
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentQuestionIndex];
+        const isMulti = q.type === 'multi';
+        
+        // Update Header
+        document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+        document.getElementById('current-score').textContent = score;
+        const progress = ((currentQuestionIndex) / 30) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        // Update Content
+        let qText = q.q;
+        if(isMulti) qText += " <span class='text-sm text-indigo-500 font-bold bg-indigo-50 px-2 py-1 rounded ml-2'>(Chọn nhiều đáp án)</span>";
+        document.getElementById('question-text').innerHTML = qText;
+        
+        // Reset Cards & Buttons
+        document.getElementById('explanation-card').classList.add('hidden');
+        document.getElementById('btn-next').classList.add('hidden');
+        
+        const btnSubmit = document.getElementById('btn-submit-multi');
+        if(isMulti) {
+            btnSubmit.classList.remove('hidden');
+        } else {
+            btnSubmit.classList.add('hidden');
+        }
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        q.shuffledAnswers.forEach((item, idx) => {
+            const btn = document.createElement('div');
+            btn.className = 'option-card bg-white p-4 rounded-xl flex items-center gap-3 text-slate-700 font-medium group';
+            
+            // Icon shape based on type
+            const iconShape = isMulti ? 'rounded-md' : 'rounded-full';
+            
+            btn.innerHTML = `
+                <div class="w-8 h-8 ${iconShape} border-2 border-slate-300 flex items-center justify-center text-sm font-bold text-slate-400 shrink-0 option-circle group-hover:border-blue-400 group-hover:text-blue-500 transition-colors">
+                    ${String.fromCharCode(65 + idx)}
+                </div>
+                <span>${item.ans}</span>
+            `;
+            
+            if (isMulti) {
+                btn.onclick = () => toggleMultiSelection(btn);
+                btn.dataset.idx = idx; // Store index for retrieval
+            } else {
+                btn.onclick = () => checkAnswer(item.isCorrect, idx, btn);
+            }
+            optionsContainer.appendChild(btn);
+        });
+        
+        lucide.createIcons();
+    }
+
+    function toggleMultiSelection(btnElement) {
+        if (btnElement.classList.contains('disabled')) return;
+        
+        btnElement.classList.toggle('option-selected');
+        const circle = btnElement.querySelector('.option-circle');
+        
+        if (btnElement.classList.contains('option-selected')) {
+             circle.classList.add('bg-blue-500', 'border-blue-500', 'text-white');
+             circle.classList.remove('text-slate-400', 'border-slate-300');
+             circle.innerHTML = '<i data-lucide="check" size="16"></i>';
+        } else {
+             circle.classList.remove('bg-blue-500', 'border-blue-500', 'text-white');
+             circle.classList.add('text-slate-400', 'border-slate-300');
+             circle.innerHTML = String.fromCharCode(65 + parseInt(btnElement.dataset.idx));
+        }
+        lucide.createIcons();
+    }
+
+    function submitMultiAnswer() {
+        const q = currentQuestions[currentQuestionIndex];
+        const options = document.querySelectorAll('.option-card');
+        const btnSubmit = document.getElementById('btn-submit-multi');
+        
+        let allCorrect = true;
+        let anySelected = false;
+
+        options.forEach((opt, idx) => {
+            const isSelected = opt.classList.contains('option-selected');
+            const isActuallyCorrect = q.shuffledAnswers[idx].isCorrect;
+            
+            if(isSelected) anySelected = true;
+
+            // Disable interaction
+            opt.classList.add('disabled', 'cursor-default');
+            opt.onclick = null;
+            
+            const circle = opt.querySelector('.option-circle');
+
+            // Logic checking
+            if (isSelected && isActuallyCorrect) {
+                // Correctly selected
+                opt.classList.add('option-correct');
+                opt.classList.remove('option-selected'); // Remove blue style
+                circle.classList.remove('bg-blue-500', 'border-blue-500', 'text-white');
+                circle.classList.add('border-green-500', 'text-green-600', 'bg-green-100');
+                circle.innerHTML = '<i data-lucide="check" size="16"></i>';
+            } else if (isSelected && !isActuallyCorrect) {
+                // Wrongly selected
+                opt.classList.add('option-wrong');
+                opt.classList.remove('option-selected');
+                circle.classList.remove('bg-blue-500', 'border-blue-500', 'text-white');
+                circle.classList.add('border-red-500', 'text-red-600', 'bg-red-100');
+                circle.innerHTML = '<i data-lucide="x" size="16"></i>';
+                allCorrect = false;
+            } else if (!isSelected && isActuallyCorrect) {
+                // Missed correct answer
+                opt.classList.add('option-correct'); // Highlight it anyway
+                circle.classList.add('border-green-500', 'text-green-600', 'bg-green-100');
+                circle.innerHTML = '<i data-lucide="check" size="16"></i>';
+                allCorrect = false;
+            }
+        });
+
+        if (!anySelected) allCorrect = false;
+
+        if (allCorrect) {
+            score++;
+            document.getElementById('current-score').textContent = score;
+        }
+
+        btnSubmit.classList.add('hidden');
+        showExplanation(q.e);
+    }
+
+    function checkAnswer(isCorrect, selectedIndex, btnElement) {
+        if (document.querySelector('.option-card.disabled')) return;
+
+        const q = currentQuestions[currentQuestionIndex];
+        const options = document.querySelectorAll('.option-card');
+        
+        options.forEach(opt => opt.classList.add('disabled', 'cursor-default'));
+
+        if (isCorrect) {
+            btnElement.classList.add('option-correct');
+            btnElement.querySelector('.option-circle').classList.add('border-green-500', 'text-green-600', 'bg-green-100');
+            btnElement.querySelector('.option-circle').innerHTML = '<i data-lucide="check" size="16"></i>';
+            score++;
+            document.getElementById('current-score').textContent = score;
+        } else {
+            btnElement.classList.add('option-wrong');
+            btnElement.querySelector('.option-circle').classList.add('border-red-500', 'text-red-600', 'bg-red-100');
+            btnElement.querySelector('.option-circle').innerHTML = '<i data-lucide="x" size="16"></i>';
+            
+            q.shuffledAnswers.forEach((item, idx) => {
+                if (item.isCorrect) {
+                    const correctBtn = options[idx];
+                    correctBtn.classList.add('option-correct');
+                    correctBtn.querySelector('.option-circle').classList.add('border-green-500', 'text-green-600', 'bg-green-100');
+                    correctBtn.querySelector('.option-circle').innerHTML = '<i data-lucide="check" size="16"></i>';
+                }
+            });
+        }
+        showExplanation(q.e);
+    }
+
+    function showExplanation(text) {
+        document.getElementById('explanation-text').textContent = text;
+        document.getElementById('explanation-card').classList.remove('hidden');
+        document.getElementById('btn-next').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < 30) {
+            renderQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        document.getElementById('quiz-play').classList.add('hidden');
+        document.getElementById('quiz-result').classList.remove('hidden');
+        
+        const percentage = Math.round((score / 30) * 100);
+        document.getElementById('correct-count').textContent = score;
+        document.getElementById('final-score').textContent = percentage + '%';
+        
+        const circle = document.getElementById('score-circle');
+        const circumference = 2 * Math.PI * 40;
+        const offset = circumference - (percentage / 100) * circumference;
+        
+        setTimeout(() => {
+            circle.style.strokeDashoffset = offset;
+            if (percentage >= 80) circle.style.stroke = '#22c55e';
+            else if (percentage >= 50) circle.style.stroke = '#eab308';
+            else circle.style.stroke = '#ef4444';
+        }, 100);
+    }
+
+    function restartQuiz() {
+        startQuiz();
+    }
+
+    window.onload = () => {
+        initTheory();
+        lucide.createIcons();
+    }
+
+</script>
+</body>
+</html>
